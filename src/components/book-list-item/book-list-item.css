@@ -1,0 +1,24 @@
+.book{
+    margin: 10px auto;
+    display: flex;
+}
+.book__img{
+    width: 100%;
+    height: auto;
+}
+.book__cover{
+    margin-right: 30px;
+    flex-shrink: 0;
+    width: 140px;
+}
+.book__details{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    align-items: flex-start;
+}
+.book__title{
+    font-size: 1.4rem;
+    
+}
