@@ -3,12 +3,14 @@ import { connect } from 'react-redux';
 
 import { withBookstoreService } from '../hoc';
 import ErrorIndicator from '../error-indicator';
-// import * as actions from '../../actions';
+import Pagination from 'react-js-pagination';
+// import Pagination from '../pagination';
 import { fetchBooks, bookAddedToCart } from '../../actions';
 import { compose } from '../../utils';
 import BookListItem from '../book-list-item';
 import './book-list.css';
-import Spinner from '../spinner'
+import Spinner from '../spinner';
+
 
 const BookList = ({books, onAddedToCart}) => {
     return(
@@ -23,6 +25,10 @@ const BookList = ({books, onAddedToCart}) => {
 };
 
 class BookListContainer extends Component{
+    state = {
+        activePage:1,
+        elemPerPage:2
+    }
     componentDidMount(){
         // const { 
         //     bookstoreService, 
@@ -36,15 +42,36 @@ class BookListContainer extends Component{
         //     .catch((err)=> booksError(err))        
         this.props.fetchBooks();//вынесли всю логику выше в отдельную функцию, которую обозначили в mapDispatchToProps
     }
+    togglePage = (activePage) =>{
+        console.log(`page ${activePage}`);
+        this.setState({activePage});
+    }
     render(){
         const { books, loading , error, onAddedToCart } = this.props;
+        const { elemPerPage,activePage } =  this.state;
         if (loading){
             return <Spinner />
         }
         if (error){
             return <ErrorIndicator />
         }
-        return <BookList books ={books} onAddedToCart={onAddedToCart}/>   
+        const indexOfLastTodo = activePage * elemPerPage;
+        const indexOfFirstTodo = indexOfLastTodo - elemPerPage;
+        const currentBooks = books.slice(indexOfFirstTodo, indexOfLastTodo);
+
+        return (
+            <>
+                <BookList books ={currentBooks} onAddedToCart={onAddedToCart}/>
+                <Pagination
+                    hideNavigation
+                    activePage={this.state.activePage}
+                    itemsCountPerPage={elemPerPage}
+                    totalItemsCount={books.length}
+                    pageRangeDisplayed={5}
+                    onChange={this.togglePage}
+                />
+            </>   
+        )
     };
 };
 const mapStateToProps=({bookList})=>{
